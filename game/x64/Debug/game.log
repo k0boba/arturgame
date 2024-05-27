@@ -1,0 +1,4 @@
+﻿  game.cpp
+C:\Users\artur\source\repos\game\game\game.cpp(296,1): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
+C:\Users\artur\source\repos\game\game\game.cpp(298,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  game.vcxproj -> C:\Users\artur\source\repos\game\x64\Debug\game.exe
