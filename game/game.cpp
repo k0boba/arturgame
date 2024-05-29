@@ -1,6 +1,6 @@
 ﻿#include <iostream>
-#include <Windows.h>
 #include <ctime>
+#include <string>
 
 using namespace std;
 
@@ -15,19 +15,20 @@ void draw_board(char board[ROWS][COLS]) {
 
     // Выводим содержимое поля
     for (int i = 0; i < ROWS; ++i) {
-        if (i == 6) {
-            cout << "|---------------------------|" << endl;
-            cout << "| ";
-            for (int j = 0; j < COLS; ++j) {
-                cout << board[i][j] << " | ";
-            }
-            cout << endl;
-        }
         cout << "| ";
         for (int j = 0; j < COLS; ++j) {
             cout << board[i][j] << " | ";
         }
         cout << endl;
+
+        if (i == 5) {
+            cout << "|---------------------------|" << endl;
+            cout << "| ";
+            for (int j = 0; j < COLS; ++j) {
+                cout << j + 1 << " | ";
+            }
+            cout << endl;
+        }
     }
 
     // Выводим нижнюю границу
@@ -38,9 +39,6 @@ void draw_board(char board[ROWS][COLS]) {
 void init_board(char board[ROWS][COLS]) {
     for (int i = 0; i < ROWS; ++i) {
         for (int j = 0; j < COLS; ++j) {
-            if (i == 6)
-                board[i][j] = j + '1';
-            else
             board[i][j] = '_';
         }
     }
@@ -57,25 +55,23 @@ void make_move(char board[ROWS][COLS], int col, char player_symbol, bool is_comp
     }
     else {
         // Обычная проверка ввода для игрока
-        while (cin.fail() || col < 0 || col > COLS-1 || board[0][col] != '_' ) {
-            if (cin.fail() || col < 0 || col > COLS-1) {
+        while (cin.fail() || col < 0 || col > COLS - 1 || board[0][col] != '_') {
+            if (cin.fail() || col < 0 || col > COLS - 1) {
                 cout << "Некорректный ввод. Введите число от 1 до 7: ";
                 cin.clear(); // Очищаем флаг ошибки ввода
                 cin.ignore(1000, '\n'); // Очищаем буфер ввода
             }
             else if (board[0][col] != '_') {
-                cout << "Столбец уже полностью заполнен. Выберите другой столбец: ";
+                cout << "Столбец уже полностью заполнен. Выберите другой столбец:\n ";
             }
             cin >> col;
             col--; // Так как столбцы нумеруются с 1, а массивы с 0
         }
     }
     // Сделать ход в выбранный столбец
-    bool valid_move = false;
-    for (int i = ROWS; i >= 0; --i) {
+    for (int i = ROWS-1; i >= 0; --i) {
         if (board[i][col] == '_') {
             board[i][col] = player_symbol;
-            valid_move = true;
             break;
         }
     }
@@ -177,7 +173,7 @@ void play_connect_four_2player() {
                     break;
                 }
             }
-            if (board_full) {
+            if (board_full and game_over == false) {
                 cout << "Ничья!" << endl;
                 game_over = true;
             }
@@ -194,7 +190,31 @@ void play_connect_four_2player() {
 }
 
 void play_connect_four_1player() {
-    char player_symbol = 'X', bot_symbol = 'O';
+    char choice;
+    char player_symbol, bot_symbol;
+    cout << "Хотите ли вы играть фишками 'X', введите Y или N, в случае вводе N вы будете играть фишками 'O': ";
+    cin >> choice;
+    // Преобразуем выбор пользователя к нижнему регистру для унификации сравнения
+    choice = tolower(choice);
+    // Проверяем, был ли введен корректный ответ
+    while (choice != 'y' && choice != 'n') {
+        cout << "Некорректный ввод. Пожалуйста, введите 'y' или 'n': ";
+        cin >> choice;
+        choice = tolower(choice); // Преобразуем ответ к нижнему регистру
+    }
+
+    if (choice == 'y') {
+        cout << "Ваш символ Х" << endl;
+        player_symbol = 'X';
+        bot_symbol = 'O';
+    }
+    else {
+        cout << "Ваш символ O" << endl;
+        player_symbol = 'O';
+        bot_symbol = 'X';
+    }
+
+
     bool play_again = true;
 
     while (play_again) {
@@ -230,7 +250,7 @@ void play_connect_four_1player() {
                         break;
                     }
                 }
-                if (board_full) {
+                if (board_full and game_over == false) {
                     cout << "Ничья!" << endl;
                     game_over = true;
                 }
@@ -277,14 +297,14 @@ void play_connect_four_1player() {
                         break;
                     }
                 }
-                if (board_full) {
+                if (board_full and game_over == false) {
                     cout << "Ничья!" << endl;
                     game_over = true;
                 }
                 turn_player = true;
-                    }
-                }
-         
+            }
+        }
+
         // Спрашиваем пользователя, хочет ли он сыграть ещё раз
         play_again = ask_for_restart();
     }
@@ -309,7 +329,7 @@ void main()
 1) P1 vs P2 - режим игры для двоих человек\n\
 2) P1 vs ИИ - режим игры против компьютера\n\n\
 Выберите режим игры 1 или 2: ";
-   
+
     char mod;
     cin >> mod;
     while (mod != '1' && mod != '2') {
@@ -322,6 +342,5 @@ void main()
     else
         play_connect_four_1player();
 }
-
 
 
